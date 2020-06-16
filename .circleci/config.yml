@@ -16,6 +16,6 @@ jobs:
           name: Test
 
 workflows:
-  main:
+  build-test:
     jobs:
       - build-and-test
