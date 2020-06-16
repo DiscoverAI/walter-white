@@ -1,21 +1,59 @@
 version: 2.1
 
-orbs:
-  python: circleci/python@0.2.1
+python-docker-image: &python-docker-image
+  working_directory: ~/repo
+  docker:
+    - image: circleci/python:3.6
+      environment:
+        PIPENV_VENV_IN_PROJECT: true
+
+commands:
+  restore-pipenv-cache:
+    description: "Restore pipenv cache"
+    steps:
+      - run: sudo chown -R circleci:circleci /usr/local/bin
+      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
+      - restore_cache:
+          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+
+  save-pipenv-cache:
+    description: "Save pipenv cache"
+    steps:
+      - save_cache:
+          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          paths:
+            - ".venv"
+            - "/usr/local/bin"
+            - "/usr/local/lib/python3.6/site-packages"
 
 jobs:
-  build-and-test:
-    executor: python/default
+  test:
+    <<: *python-docker-image
     steps:
       - checkout
-      - python/load-cache
-      - python/install-deps
-      - python/save-cache
+      - restore-pipenv-cache
       - run:
+          name: Install dependencies
+          command: pipenv sync --dev
+      - save-pipenv-cache
+      - run:
+          name: Run tests
           command: pipenv run pytest
-          name: Test
+  lint:
+    <<: *python-docker-image
+    steps:
+      - checkout
+      - restore-pipenv-cache
+      - run:
+          name: Install dependencies
+          command: pipenv sync --dev
+      - save-pipenv-cache
+      - run:
+          name: Run linter
+          command: pipenv run lint
 
 workflows:
-  build-test:
+  build-test-deploy:
     jobs:
-      - build-and-test
+      - test
+      - lint
