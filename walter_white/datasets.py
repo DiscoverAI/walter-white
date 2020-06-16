@@ -14,5 +14,5 @@ def parse_line(line):
 
 def load_dataset(dataset_path):
     absolute_dataset_path = os.path.realpath(dataset_path)
-    raw_lines_dataset = tf.data.TextLineDataset(absolute_dataset_path)
+    raw_lines_dataset = tf.data.TextLineDataset(tf.data.Dataset.list_files(absolute_dataset_path))
     return raw_lines_dataset.map(partial(parse_line))
