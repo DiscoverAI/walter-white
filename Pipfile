@@ -11,7 +11,7 @@ pylint = "*"
 [packages]
 tensorflow = "==2.1.0"
 scikit-learn = "*"
-walter-white = {editable = true,path = "."}
+walter-white = {editable = true, path = "."}
 
 [requires]
 python_version = "3.6"
