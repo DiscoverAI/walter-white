@@ -4,6 +4,7 @@ import logging
 import os
 from functools import partial, reduce
 
+import boto3
 import tensorflow as tf
 
 LOG = logging.getLogger(__name__)
@@ -36,3 +37,13 @@ def dictionary_size(dictionary_path):
 
 def count_dataset_size(dataset):
     return dataset.reduce(tf.constant(0), lambda x, _: x + 1).numpy()
+
+
+def download_s3_folder(datalake, folder_name, local_path):
+    s3 = boto3.resource('s3')
+    bucket = s3.Bucket(datalake)
+    for s3_object in bucket.objects.filter(Prefix=folder_name):
+        if not os.path.exists(local_path):
+            os.makedirs(local_path)
+        local_file_name = s3_object.key.replace(folder_name, local_path)
+        bucket.download_file(s3_object.key, local_file_name)
