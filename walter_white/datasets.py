@@ -8,6 +8,7 @@ import boto3
 import tensorflow as tf
 
 LOG = logging.getLogger(__name__)
+MOLECULE_SIZE = 57
 
 
 def parse_line(dictionary_size, line):
@@ -28,14 +29,14 @@ def read_lines(acc, file_path):
         return acc + list(dictionary_reader)
 
 
-def dictionary_size(dictionary_path):
+def calculate_dictionary_size(dictionary_path):
     absolute_dataset_path = os.path.realpath(dictionary_path + '/*.csv')
     dictionary_files = glob.glob(absolute_dataset_path)
     lines = reduce(read_lines, dictionary_files, [])
     return len(lines)
 
 
-def count_dataset_size(dataset):
+def calculate_dataset_size(dataset):
     return dataset.reduce(tf.constant(0), lambda x, _: x + 1).numpy()
 
 

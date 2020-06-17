@@ -50,11 +50,11 @@ def train(neural_network_config, neural_network_model, train_dataset, test_datas
     batch_size = neural_network_config['batchSize']
     epochs = neural_network_config['epochs']
 
-    train_dataset_size = datasets.count_dataset_size(train_dataset)
+    train_dataset_size = datasets.calculate_dataset_size(train_dataset)
     train_dataset_batches = int(train_dataset_size / batch_size)
     batched_train_dataset = train_dataset.batch(batch_size).repeat()
 
-    test_dataset_size = datasets.count_dataset_size(test_dataset)
+    test_dataset_size = datasets.calculate_dataset_size(test_dataset)
     test_dataset_batches = int(test_dataset_size / batch_size)
     batched_test_dataset = test_dataset.batch(batch_size).repeat()
 
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     datasets.download_s3_folder(datalake, 'pinkman/train.csv', './train')
     LOG.info('Done downloading datasets')
 
-    dictionary_size = datasets.dictionary_size('./dictionary')
+    dictionary_size = datasets.calculate_dictionary_size('./dictionary')
     LOG.info('Dictionary size of: %s', dictionary_size)
     train_dataset = datasets.load_dataset('./train', dictionary_size)
     test_dataset = datasets.load_dataset('./test', dictionary_size)
