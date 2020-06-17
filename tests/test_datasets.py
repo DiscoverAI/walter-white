@@ -1,5 +1,6 @@
 import numpy as np
 import numpy.testing as npt
+import tensorflow as tf
 
 from walter_white import datasets
 
@@ -41,5 +42,21 @@ def test_should_return_dictionary_size_with_one_file_existing():
 def test_should_return_dictionary_size_with_n_file_existing():
     actual = datasets.dictionary_size('tests/resources/dictionary-two-files')
     expected = 9
+
+    assert expected == actual
+
+
+def test_should_return_1_for_dataset_of_size_1():
+    one_elem_dataset = tf.data.Dataset.from_tensor_slices([[1]])
+    actual = datasets.count_dataset_size(one_elem_dataset)
+    expected = 1
+
+    assert expected == actual
+
+
+def test_should_return_5_for_dataset():
+    one_elem_dataset = tf.data.Dataset.from_tensor_slices([[1], [5], [1], [3], [4]])
+    actual = datasets.count_dataset_size(one_elem_dataset)
+    expected = 5
 
     assert expected == actual

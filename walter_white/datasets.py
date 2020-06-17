@@ -33,3 +33,6 @@ def dictionary_size(dictionary_path):
     lines = reduce(read_lines, dictionary_files, [])
     return len(lines)
 
+
+def count_dataset_size(dataset):
+    return dataset.reduce(tf.constant(0), lambda x, _: x + 1).numpy()
