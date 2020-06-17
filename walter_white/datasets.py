@@ -1,6 +1,8 @@
+import csv
+import glob
 import logging
 import os
-from functools import partial
+from functools import partial, reduce
 
 import tensorflow as tf
 
@@ -17,3 +19,17 @@ def load_dataset(dataset_path, dictionary_size):
     all_files = tf.data.Dataset.list_files(absolute_dataset_path, shuffle=False)
     raw_lines_dataset = tf.data.TextLineDataset(all_files)
     return raw_lines_dataset.map(partial(parse_line, dictionary_size))
+
+
+def read_lines(acc, file_path):
+    with open(file_path, 'r') as dictionary_file:
+        dictionary_reader = csv.reader(dictionary_file, delimiter=',')
+        return acc + list(dictionary_reader)
+
+
+def dictionary_size(dictionary_path):
+    absolute_dataset_path = os.path.realpath(dictionary_path + '/*.csv')
+    dictionary_files = glob.glob(absolute_dataset_path)
+    lines = reduce(read_lines, dictionary_files, [])
+    return len(lines)
+
