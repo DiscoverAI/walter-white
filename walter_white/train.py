@@ -85,8 +85,8 @@ if __name__ == '__main__':
 
     dictionary_size = datasets.calculate_dictionary_size('./dictionary')
     LOG.info('Dictionary size of: %s', dictionary_size)
-    train_dataset = datasets.load_dataset('./train', dictionary_size)
-    test_dataset = datasets.load_dataset('./test', dictionary_size)
+    train_dataset = datasets.load_dataset('./train', dictionary_size, datasets.MAX_SMILE_SIZE)
+    test_dataset = datasets.load_dataset('./test', dictionary_size, datasets.MAX_SMILE_SIZE)
     LOG.info('Done loading datasets')
 
     LOG.info('Start building model')

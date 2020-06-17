@@ -8,19 +8,26 @@ import boto3
 import tensorflow as tf
 
 LOG = logging.getLogger(__name__)
-MOLECULE_SIZE = 57
+MAX_SMILE_SIZE = 57
 
 
-def parse_line(dictionary_size, line):
+def _pad(smile_size, input_vector):
+    padding_vector_size = smile_size - len(input_vector)
+    return tf.concat([input_vector, [0] * padding_vector_size], 0)
+
+
+def parse_line(dictionary_size, smile_size, line):
     split_line = tf.strings.split(line, sep=',')
-    return tf.divide(tf.strings.to_number(split_line, out_type=tf.dtypes.double), dictionary_size)
+    number_values = tf.strings.to_number(split_line, out_type=tf.dtypes.double)
+    padded_values = tf.py_function(partial(_pad, smile_size), [number_values], tf.dtypes.double)
+    return tf.divide(padded_values, dictionary_size)
 
 
-def load_dataset(dataset_path, dictionary_size):
+def load_dataset(dataset_path, dictionary_size, smile_size):
     absolute_dataset_path = os.path.realpath(dataset_path)
     all_files = tf.data.Dataset.list_files(absolute_dataset_path, shuffle=False)
     raw_lines_dataset = tf.data.TextLineDataset(all_files)
-    return raw_lines_dataset.map(partial(parse_line, dictionary_size))
+    return raw_lines_dataset.map(partial(parse_line, dictionary_size, smile_size))
 
 
 def read_lines(acc, file_path):

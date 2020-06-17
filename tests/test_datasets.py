@@ -6,7 +6,7 @@ from walter_white import datasets
 
 
 def test_should_load_dataset_from_one_file():
-    actual_dataset = datasets.load_dataset('tests/resources/test/part-1.csv', 1)
+    actual_dataset = datasets.load_dataset('tests/resources/test/part-1.csv', 1, 3)
     actual = next(iter(actual_dataset.batch(3)))
 
     npt.assert_array_equal(actual, np.array([
@@ -16,8 +16,19 @@ def test_should_load_dataset_from_one_file():
     ], dtype=float))
 
 
+def test_should_fill_dataset_dimensions_with_zero():
+    actual_dataset = datasets.load_dataset('tests/resources/test/part-1.csv', 1, 5)
+    actual = next(iter(actual_dataset.batch(3)))
+
+    npt.assert_array_equal(actual, np.array([
+        [25.0, 26.0, 22.0, 0.0, 0.0],
+        [25.0, 25.0, 1.0, 0.0, 0.0],
+        [25.0, 21.0, 2.0, 0.0, 0.0]
+    ], dtype=float))
+
+
 def test_should_load_dataset_from_directory():
-    actual_dataset = datasets.load_dataset('tests/resources/test/*.csv', 10)
+    actual_dataset = datasets.load_dataset('tests/resources/test/*.csv', 10, 3)
     actual = next(iter(actual_dataset.batch(8)))
 
     npt.assert_array_equal(actual, np.array([
