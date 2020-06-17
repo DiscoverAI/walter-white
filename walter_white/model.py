@@ -1,6 +1,9 @@
+import logging
 from functools import reduce
 
 import tensorflow as tf
+
+LOG = logging.getLogger(__name__)
 
 
 def _compile_layer(acc, layer_config):
@@ -20,3 +23,13 @@ def autoencoder(neural_net_config):
         name='output'
     )(stacks)
     return tf.keras.Model(inputs=input_layer, outputs=output_layer)
+
+
+def compile_model(neural_network_config):
+    nn_architecture = autoencoder(neural_network_config)
+    nn_architecture.summary(print_fn=LOG.info)
+    nn_architecture.compile(
+        loss=neural_network_config['lossFunction'],
+        metrics=['accuracy', tf.keras.metrics.Precision()],
+        optimizer=neural_network_config['optimizer'],
+    )
