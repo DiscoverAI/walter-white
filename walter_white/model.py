@@ -33,3 +33,4 @@ def compile_model(neural_network_config):
         metrics=['accuracy', tf.keras.metrics.Precision()],
         optimizer=neural_network_config['optimizer'],
     )
+    return nn_architecture
