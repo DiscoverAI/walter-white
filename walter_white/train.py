@@ -8,38 +8,22 @@ from walter_white import model, datasets
 
 LOG = logging.getLogger(__name__)
 NN_CONF = {
-    "optimizer": "adam",
+    "optimizer": "adadelta",
     "lossFunction": "binary_crossentropy",
-    "epochs": 36,
+    "epochs": 1,
     "batchSize": 64,
     "layers": {
         "input": {
-            "neurons": 100,
+            "neurons": 57,
         },
         "stacks": [
             {
-                "neurons": 80,
-                "activationFunction": "relu",
-            },
-            {
-                "neurons": 50,
-                "activationFunction": "relu",
-            },
-            {
-                "neurons": 20,
-                "activationFunction": "tanh",
-            },
-            {
-                "neurons": 50,
-                "activationFunction": "relu",
-            },
-            {
-                "neurons": 80,
-                "activationFunction": "relu",
+                "neurons": 30,
+                "activationFunction": "sigmoid",
             },
         ],
         "output": {
-            "neurons": 100,
+            "neurons": 57,
             "activationFunction": "sigmoid",
         },
     }
@@ -50,11 +34,11 @@ def train(neural_network_config, neural_network_model, train_dataset, test_datas
     batch_size = neural_network_config['batchSize']
     epochs = neural_network_config['epochs']
 
-    train_dataset_size = datasets.calculate_dataset_size(train_dataset)
+    train_dataset_size = 1584663
     train_dataset_batches = int(train_dataset_size / batch_size)
     batched_train_dataset = train_dataset.batch(batch_size).repeat()
 
-    test_dataset_size = datasets.calculate_dataset_size(test_dataset)
+    test_dataset_size = 176074
     test_dataset_batches = int(test_dataset_size / batch_size)
     batched_test_dataset = test_dataset.batch(batch_size).repeat()
 
@@ -85,8 +69,8 @@ if __name__ == '__main__':
 
     dictionary_size = datasets.calculate_dictionary_size('./dictionary')
     LOG.info('Dictionary size of: %s', dictionary_size)
-    train_dataset = datasets.load_dataset('./train', dictionary_size, datasets.MAX_SMILE_SIZE)
-    test_dataset = datasets.load_dataset('./test', dictionary_size, datasets.MAX_SMILE_SIZE)
+    train_dataset = datasets.load_dataset('./train/*.csv', dictionary_size, datasets.MAX_SMILE_SIZE)
+    test_dataset = datasets.load_dataset('./test/*.csv', dictionary_size, datasets.MAX_SMILE_SIZE)
     LOG.info('Done loading datasets')
 
     LOG.info('Start building model')
