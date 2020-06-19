@@ -18,9 +18,9 @@ def _pad(smile_size, input_vector):
 
 def parse_line(dictionary_size, smile_size, line):
     split_line = tf.strings.split(line, sep=',')
-    number_values = tf.strings.to_number(split_line, out_type=tf.dtypes.double)
-    padded_values = tf.py_function(partial(_pad, smile_size), [number_values], tf.dtypes.double)
-    return tf.divide(padded_values, dictionary_size)
+    number_values = tf.strings.to_number(split_line, out_type=tf.dtypes.float64)
+    padded_values = tf.py_function(partial(_pad, smile_size), [number_values], tf.dtypes.float64)
+    return tf.reshape(tf.divide(padded_values, dictionary_size), [smile_size])
 
 
 def load_dataset(dataset_path, dictionary_size, smile_size):
