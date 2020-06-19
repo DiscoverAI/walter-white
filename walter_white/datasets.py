@@ -21,7 +21,7 @@ def parse_line(dictionary_size, smile_size, line):
     number_values = tf.strings.to_number(split_line, out_type=tf.dtypes.float64)
     padded_values = tf.py_function(partial(_pad, smile_size), [number_values], tf.dtypes.float64)
     normalized_values = tf.reshape(tf.divide(padded_values, dictionary_size), [smile_size])
-    return (normalized_values, normalized_values)
+    return normalized_values, normalized_values
 
 
 def load_dataset(dataset_path, dictionary_size, smile_size):
@@ -49,8 +49,8 @@ def calculate_dataset_size(dataset):
 
 
 def download_s3_folder(datalake, folder_name, local_path):
-    s3 = boto3.resource('s3')
-    bucket = s3.Bucket(datalake)
+    s_3 = boto3.resource('s3')
+    bucket = s_3.Bucket(datalake)
     for s3_object in bucket.objects.filter(Prefix=folder_name):
         if not os.path.exists(local_path):
             os.makedirs(local_path)

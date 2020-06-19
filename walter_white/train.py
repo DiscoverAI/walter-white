@@ -30,17 +30,17 @@ NN_CONF = {
 }
 
 
-def train(neural_network_config, neural_network_model, train_dataset, test_dataset):
+def train(neural_network_config, neural_network_model, train_ds, test_ds):
     batch_size = neural_network_config['batchSize']
     epochs = neural_network_config['epochs']
 
     train_dataset_size = 1584663
     train_dataset_batches = int(train_dataset_size / batch_size)
-    batched_train_dataset = train_dataset.batch(batch_size).repeat()
+    batched_train_dataset = train_ds.batch(batch_size).repeat()
 
     test_dataset_size = 176074
     test_dataset_batches = int(test_dataset_size / batch_size)
-    batched_test_dataset = test_dataset.batch(batch_size).repeat()
+    batched_test_dataset = test_ds.batch(batch_size).repeat()
 
     callbacks = [
         tf.keras.callbacks.TensorBoard(log_dir='resources/tensorboard')
