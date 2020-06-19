@@ -19,3 +19,4 @@ python_version = "3.6"
 
 [scripts]
 lint = "pylint walter_white"
+tensorboard = "tensorboard --logdir resources/tensorboard"
