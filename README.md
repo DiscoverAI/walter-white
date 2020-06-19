@@ -15,3 +15,10 @@ pipenv run pytest
 ```bash
 pipenv run lint
 ```
+
+## Run tensorboard
+```bash
+pipenv run tensorboard
+```
+
+Will create a tensorboard instance at [http://localhost:6006/](http://localhost:6006/) 
