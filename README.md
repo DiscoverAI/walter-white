@@ -1,5 +1,6 @@
 # Walter White
-[![CircleCI](https://circleci.com/gh/DiscoverAI/walter-white.svg?style=svg)](https://circleci.com/gh/DiscoverAI/walter-white)
+[![CircleCI](https://circleci.com/gh/DiscoverAI/walter-white.svg?style=shield)](https://circleci.com/gh/DiscoverAI/walter-white)
+[![GitHub license](https://img.shields.io/github/license/DiscoverAI/walter-white)](https://github.com/DiscoverAI/walter-white/blob/master/LICENSE)
 > "Say my name."
 >
 > -- Walter White (Breaking Bad)
