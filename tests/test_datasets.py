@@ -8,30 +8,33 @@ from walter_white import datasets
 def test_should_load_dataset_from_one_file():
     actual_dataset = datasets.load_dataset('tests/resources/test/part-1.csv', 1, 3)
     actual = next(iter(actual_dataset.batch(3)))
-
-    npt.assert_array_equal(actual, np.array([
+    expected_values = [
         [25.0, 26.0, 22.0],
         [25.0, 25.0, 1.0],
         [25.0, 21.0, 2.0]
-    ], dtype=float))
+    ]
+    expected = np.array((expected_values, expected_values), dtype=float)
+
+    npt.assert_array_equal(actual, expected)
 
 
 def test_should_fill_dataset_dimensions_with_zero():
     actual_dataset = datasets.load_dataset('tests/resources/test/part-1.csv', 1, 5)
     actual = next(iter(actual_dataset.batch(3)))
-
-    npt.assert_array_equal(actual, np.array([
+    expected_values = [
         [25.0, 26.0, 22.0, 0.0, 0.0],
         [25.0, 25.0, 1.0, 0.0, 0.0],
         [25.0, 21.0, 2.0, 0.0, 0.0]
-    ], dtype=float))
+    ]
+    expected = np.array((expected_values, expected_values), dtype=float)
+
+    npt.assert_array_equal(actual, expected)
 
 
 def test_should_load_dataset_from_directory():
     actual_dataset = datasets.load_dataset('tests/resources/test/*.csv', 10, 3)
     actual = next(iter(actual_dataset.batch(8)))
-
-    npt.assert_array_equal(actual, np.array([
+    expected_values = [
         [2.5, 2.6, 2.2],
         [2.5, 2.5, 0.1],
         [2.5, 2.1, 0.2],
@@ -40,7 +43,10 @@ def test_should_load_dataset_from_directory():
         [3.3, 2.5, 0.1],
         [4.2, 2.1, 0.2],
         [0.2, 2.5, 2.3],
-    ]))
+    ]
+    expected = np.array((expected_values, expected_values), dtype=float)
+
+    npt.assert_array_equal(actual, expected)
 
 
 def test_should_return_dictionary_size_with_one_file_existing():
