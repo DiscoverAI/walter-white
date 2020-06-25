@@ -1,0 +1,38 @@
+Parameters:
+  BucketName:
+    Type: String
+    Description: Bucket name of the datalake
+  ProjectName:
+    Type: String
+    Description: Name of the project this datalake belongs to
+  ServiceName:
+    Type: String
+    Description: Name of the project this datalake belongs to
+
+Resources:
+  WalterWhiteBatchComputeEnvironment:
+    Type: AWS::S3::ComputeEnvironment
+    Properties:
+      ComputeEnvironmentName: !Ref ServiceName
+      ComputeResources:
+        DesiredvCpus: 0
+#        Ec2KeyPair: String
+        InstanceRole: String
+        InstanceTypes:
+          - String
+        LaunchTemplate:
+          LaunchTemplateSpecification
+        MaxvCpus: Integer
+        MinvCpus: Integer
+        PlacementGroup: String
+        SecurityGroupIds:
+          - String
+        SpotIamFleetRole: String
+        Subnets:
+          - String
+        Tags: Json
+        Type: String
+      ServiceRole: String
+      State: String
+      Type: String
+
