@@ -52,8 +52,31 @@ jobs:
           name: Run linter
           command: pipenv run lint
 
+  build-container:
+    machine: true
+    steps:
+      - checkout
+      - restore-pipenv-cache
+      - run:
+          name: Install dependencies
+          command: pipenv sync
+      - save-pipenv-cache
+      - run: pipenv lock -r > requirements.txt
+      - run:
+          name: Build and push container
+          command: |
+            echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
+            docker build -t meandor/walter-white:$CIRCLE_SHA1 .
+            docker tag meandor/walter-white:$CIRCLE_SHA1 meandor/walter-white:latest
+            docker push meandor/walter-white:$CIRCLE_SHA1
+            docker push meandor/meandor/walter-white:latest
+
 workflows:
   build-test-deploy:
     jobs:
       - test
       - lint
+      - build-container:
+          - requires:
+              - test
+              - lint
