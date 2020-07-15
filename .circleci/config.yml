@@ -53,6 +53,7 @@ jobs:
           command: pipenv run lint
 
   build-container:
+    <<: *python-docker-image
     machine: true
     steps:
       - checkout
