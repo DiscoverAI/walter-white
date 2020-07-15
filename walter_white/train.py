@@ -11,7 +11,7 @@ NN_CONF = {
     "optimizer": "adadelta",
     "lossFunction": "binary_crossentropy",
     "epochs": 1,
-    "batchSize": 64,
+    "batchSize": 10000,
     "layers": {
         "input": {
             "neurons": 57,
@@ -43,7 +43,7 @@ def train(neural_network_config, neural_network_model, train_ds, test_ds):
     batched_test_dataset = test_ds.batch(batch_size).repeat()
 
     callbacks = [
-        tf.keras.callbacks.TensorBoard(log_dir='resources/tensorboard')
+        tf.keras.callbacks.TensorBoard(log_dir='resources/tensorboard', update_freq='batch')
     ]
 
     return neural_network_model.fit(
