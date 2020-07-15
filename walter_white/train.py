@@ -10,7 +10,7 @@ LOG = logging.getLogger(__name__)
 NN_CONF = {
     "optimizer": "adadelta",
     "lossFunction": "binary_crossentropy",
-    "epochs": 1,
+    "epochs": 30,
     "batchSize": 10000,
     "layers": {
         "input": {
