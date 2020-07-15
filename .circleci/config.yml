@@ -70,7 +70,7 @@ jobs:
             docker build -t meandor/walter-white:$CIRCLE_SHA1 .
             docker tag meandor/walter-white:$CIRCLE_SHA1 meandor/walter-white:latest
             docker push meandor/walter-white:$CIRCLE_SHA1
-            docker push meandor/meandor/walter-white:latest
+            docker push meandor/walter-white:latest
 
 workflows:
   build-test-deploy:
