@@ -76,11 +76,11 @@ jobs:
     machine: true
     steps:
       - attach_workspace:
-          at: ~/repo/image
+          at: ~/repo/image/image
       - run:
           name: Build and push container
           command: |
-            cd repo/image
+            cd ~/repo/image/image
             echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
             docker build -t meandor/walter-white:$CIRCLE_SHA1 .
             docker tag meandor/walter-white:$CIRCLE_SHA1 meandor/walter-white:latest
