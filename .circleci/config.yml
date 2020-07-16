@@ -63,23 +63,25 @@ jobs:
           name: Install dependencies
           command: pipenv sync
       - save-pipenv-cache
-      - run: pipenv lock -r > requirements.txt
+      - run: mkdir image
+      - run: cp -r walter_white ./image/
+      - run: cp Dockerfile ./image/ && cp setup.py ./image/ && cp README.md ./image/
+      - run: pipenv lock -r > ./image/requirements.txt
       - persist_to_workspace:
-          root: ~/
+          root: ~/repo/
           paths:
-            - repo
+            - image
 
   release-image:
-    working_directory: ~/repo
     machine: true
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: ~/repo/image
       - run:
           name: Build and push container
           command: |
+            cd repo/image
             echo "$DOCKER_PASS" | docker login --username $DOCKER_USER --password-stdin
-            ls -all
             docker build -t meandor/walter-white:$CIRCLE_SHA1 .
             docker tag meandor/walter-white:$CIRCLE_SHA1 meandor/walter-white:latest
             docker push meandor/walter-white:$CIRCLE_SHA1
