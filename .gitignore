@@ -51,3 +51,4 @@ venv.bak/
 .idea
 *.iml
 resources/tensorboard
+requirements.txt
