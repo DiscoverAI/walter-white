@@ -6,4 +6,4 @@ RUN mkdir resources
 RUN pip install --no-cache-dir -r requirements.txt
 RUN useradd -M -s /bin/sh walter-white && chown -R walter-white:walter-white /usr/src/app
 USER walter-white
-CMD python walter_white/tran.py
+CMD python walter_white/train.py
