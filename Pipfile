@@ -7,11 +7,11 @@ verify_ssl = true
 pytest = "*"
 pytest-mock = "*"
 pylint = "*"
-boto3 = "*"
 
 [packages]
 tensorflow = "==2.1.0"
 scikit-learn = "*"
+boto3 = "*"
 walter-white = {editable = true, path = "."}
 
 [requires]
