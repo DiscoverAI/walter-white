@@ -38,7 +38,9 @@ jobs:
       - save-pipenv-cache
       - run:
           name: Run tests
-          command: pipenv run pytest
+          command: pipenv run pytest --junitxml=./tests/test-report.xml
+      - store_test_results:
+          path: ./tests
   lint:
     <<: *python-docker-image
     steps:
