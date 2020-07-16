@@ -52,9 +52,8 @@ jobs:
           name: Run linter
           command: pipenv run lint
 
-  build-container:
+  build:
     <<: *python-docker-image
-    machine: true
     steps:
       - checkout
       - restore-pipenv-cache
@@ -63,6 +62,17 @@ jobs:
           command: pipenv sync
       - save-pipenv-cache
       - run: pipenv lock -r > requirements.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - repo
+
+  release-image:
+    working_directory: ~/repo
+    machine: true
+    steps:
+      - attach_workspace:
+          at: ~/repo
       - run:
           name: Build and push container
           command: |
@@ -73,11 +83,14 @@ jobs:
             docker push meandor/walter-white:latest
 
 workflows:
-  build-test-deploy:
+  test-build-release:
     jobs:
       - test
       - lint
-      - build-container:
-          - requires:
-              - test
-              - lint
+      - build:
+          requires:
+            - test
+            - lint
+      - release-image:
+          requires:
+            - build
