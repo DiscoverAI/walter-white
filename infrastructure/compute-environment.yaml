@@ -1,38 +1,164 @@
 Parameters:
-  BucketName:
-    Type: String
-    Description: Bucket name of the datalake
   ProjectName:
     Type: String
-    Description: Name of the project this datalake belongs to
-  ServiceName:
+    Description: Name of the project this belongs to
+  DatalakeStackName:
     Type: String
-    Description: Name of the project this datalake belongs to
+    Description: Stack name of the datalake
 
 Resources:
-  WalterWhiteBatchComputeEnvironment:
-    Type: AWS::S3::ComputeEnvironment
+  ComputeEnvironmentVPC:
+    Type: AWS::EC2::VPC
     Properties:
-      ComputeEnvironmentName: !Ref ServiceName
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+      CidrBlock: "10.0.0.0/16"
+
+  ComputeEnvironmentInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+
+  ComputeEnvironmentRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref ComputeEnvironmentVPC
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+
+  ComputeEnvironmentVPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref ComputeEnvironmentVPC
+      InternetGatewayId: !Ref ComputeEnvironmentInternetGateway
+
+  ComputeEnvironmentSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: EC2 Security Group for instances launched in the VPC by Batch
+      VpcId: !Ref ComputeEnvironmentVPC
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+
+  ComputeEnvironmentSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.0.0/24
+      VpcId: !Ref ComputeEnvironmentVPC
+      MapPublicIpOnLaunch: 'True'
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+
+  ComputeEnvironmentRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref ComputeEnvironmentRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref ComputeEnvironmentInternetGateway
+
+  ComputeEnvironmentSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref ComputeEnvironmentRouteTable
+      SubnetId: !Ref ComputeEnvironmentSubnet
+
+  ComputeEnvironmentServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+      AssumeRolePolicyDocument:
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": {
+              "Service": "batch.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+          }
+          ]
+        }
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole"
+
+  ComputeEnvironmentInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+      AssumeRolePolicyDocument:
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+          {
+            "Sid": "",
+            "Effect": "Allow",
+            "Principal": {
+              "Service": "ec2.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+          }
+          ]
+        }
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+      Policies:
+        - PolicyName: write-to-datalake
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                Resource:
+                  - Fn::ImportValue:
+                      !Sub "${DatalakeStackName}-Arn"
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:GetObject
+                Resource:
+                  - Fn::Join:
+                      - ""
+                      - - Fn::ImportValue:
+                            !Sub "${DatalakeStackName}-Arn"
+                        - "/*"
+
+  ComputeEnvironmentInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref ComputeEnvironmentInstanceRole
+
+  ComputeEnvironment:
+    Type: AWS::Batch::ComputeEnvironment
+    Properties:
+      ComputeEnvironmentName: !Ref ProjectName
       ComputeResources:
         DesiredvCpus: 0
-#        Ec2KeyPair: String
-        InstanceRole: String
+        Ec2KeyPair: "tuco-key"
+        ImageId: "ami-00b639818e857a757"
+        InstanceRole: !Ref ComputeEnvironmentInstanceProfile
         InstanceTypes:
-          - String
-        LaunchTemplate:
-          LaunchTemplateSpecification
-        MaxvCpus: Integer
-        MinvCpus: Integer
-        PlacementGroup: String
+          - "optimal"
+          - "c5.large"
+        MaxvCpus: 24
+        MinvCpus: 0
         SecurityGroupIds:
-          - String
-        SpotIamFleetRole: String
+          - !Ref ComputeEnvironmentSecurityGroup
         Subnets:
-          - String
-        Tags: Json
-        Type: String
-      ServiceRole: String
-      State: String
-      Type: String
-
+          - !Ref ComputeEnvironmentSubnet
+        Type: "EC2"
+      ServiceRole: !Ref ComputeEnvironmentServiceRole
+      State: "ENABLED"
+      Type: "MANAGED"
