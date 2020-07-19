@@ -152,6 +152,10 @@ Resources:
         InstanceTypes:
           - "optimal"
           - "c5.large"
+          - "c5.xlarge"
+          - "c5.2xlarge"
+          - "c5.4xlarge"
+          - "c5.9xlarge"
         MaxvCpus: 24
         MinvCpus: 0
         SecurityGroupIds:
