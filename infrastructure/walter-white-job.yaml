@@ -2,6 +2,9 @@ Parameters:
   ServiceName:
     Type: String
     Description: Name of the service
+  BucketUri:
+    Type: String
+    Description: URI of the Datalake bucket
 
 Resources:
   WalterWhiteJobDefinition:
@@ -11,6 +14,9 @@ Resources:
       Type: container
       ContainerProperties:
         Image: meandor/walter-white:latest
+        Environment:
+          - Name: DATALAKE
+            Value: !Ref BucketUri
         Vcpus: 2
         Memory: 2048
       RetryStrategy:

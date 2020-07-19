@@ -23,7 +23,7 @@ walter-white-job:
 	aws cloudformation deploy \
 		--template-file walter-white-job.yaml \
 		--stack-name "$(service_name)" \
-		--parameter-overrides ServiceName=$(service_name)
+		--parameter-overrides ServiceName=$(service_name) BucketUri="s3://$(bucket_name)"
 
 .PHONY: infrastructure
 infrastructure: compute-environment walter-white-job
