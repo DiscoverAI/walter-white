@@ -14,8 +14,19 @@ compute-environment:
 		--capabilities CAPABILITY_IAM \
 		--parameter-overrides ProjectName=$(project_name) DatalakeStackName="$(project_name)-datalake"
 
+.PHONY: walter-white-job-template-test
+walter-white-job-template-test:
+	aws cloudformation validate-template --template-body file://./walter-white-job.yaml >> /dev/null
+
+.PHONY: walter-white-job
+walter-white-job:
+	aws cloudformation deploy \
+		--template-file walter-white-job.yaml \
+		--stack-name "$(service_name)" \
+		--parameter-overrides ServiceName=$(service_name)
+
 .PHONY: infrastructure
-infrastructure: compute-environment
+infrastructure: compute-environment walter-white-job
 
 .PHONY: template-test
-template-test: compute-environment-template-test
+template-test: compute-environment-template-test walter-white-job-template-test

@@ -1,0 +1,24 @@
+Parameters:
+  ServiceName:
+    Type: String
+    Description: Name of the service
+
+Resources:
+  WalterWhiteJobDefinition:
+    Type: AWS::Batch::JobDefinition
+    Properties:
+      JobDefinitionName: walter-white-training-JobDefinition
+      Type: container
+      ContainerProperties:
+        Image: meandor/walter-white:latest
+        Vcpus: 2
+        Memory: 2048
+      RetryStrategy:
+        Attempts: 1
+
+Outputs:
+  WatlerWhiteJobDefinitionArn:
+    Description: ARN of WalterWhite JobDefinition
+    Value: !Ref WalterWhiteJobDefinition
+    Export:
+      Name: !Sub '${AWS::StackName}-JobDefinition-Arn'
