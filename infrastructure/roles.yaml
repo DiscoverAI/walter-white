@@ -40,6 +40,7 @@ Resources:
           "Version": "2012-10-17",
           "Statement": [
           {
+            "Sid": "",
             "Effect": "Allow",
             "Principal": {
               "Service": "ec2.amazonaws.com"
@@ -72,6 +73,12 @@ Resources:
                             !Sub "${DatalakeStackName}-Arn"
                         - "/*"
 
+  WalterWhiteProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref WalterWhiteRole
+
 Outputs:
   ServiceRoleARN:
     Description: ARN of the ServiceRole
@@ -80,7 +87,7 @@ Outputs:
       Name: !Sub '${AWS::StackName}-service-Arn'
 
   InstanceRoleARN:
-    Description: ARN of the ServiceRole
-    Value: !GetAtt WalterWhiteRole.Arn
+    Description: ARN of the InstanceRole
+    Value: !GetAtt WalterWhiteProfile.Arn
     Export:
       Name: !Sub '${AWS::StackName}-instance-Arn'
