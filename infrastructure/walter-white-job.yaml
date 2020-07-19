@@ -17,8 +17,10 @@ Resources:
         Environment:
           - Name: DATALAKE
             Value: !Ref BucketUri
-        Vcpus: 2
-        Memory: 2048
+          - Name: LOGLEVEL
+            Value: INFO
+        Vcpus: 8
+        Memory: 14336
       RetryStrategy:
         Attempts: 1
 
