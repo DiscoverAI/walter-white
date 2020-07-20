@@ -19,9 +19,11 @@ Resources:
             Value: !Ref BucketUri
           - Name: LOGLEVEL
             Value: INFO
+        Vcpus: 4
+        Memory: 14336
         ResourceRequirements:
-          - Type: GPU
-            Value: 1
+          - Type: "GPU"
+            Value: "1"
       RetryStrategy:
         Attempts: 1
 
