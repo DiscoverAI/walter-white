@@ -19,8 +19,8 @@ Resources:
             Value: !Ref BucketUri
           - Name: LOGLEVEL
             Value: INFO
-        Vcpus: 8
-        Memory: 14336
+        Vcpus: 4
+        Memory: 61440
       RetryStrategy:
         Attempts: 1
 

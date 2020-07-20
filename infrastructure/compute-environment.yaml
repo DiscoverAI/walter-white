@@ -143,20 +143,17 @@ Resources:
   ComputeEnvironment:
     Type: AWS::Batch::ComputeEnvironment
     Properties:
-      ComputeEnvironmentName: !Ref ProjectName
       ComputeResources:
         DesiredvCpus: 0
         Ec2KeyPair: "tuco-key"
         ImageId: "ami-00b639818e857a757"
         InstanceRole: !Ref ComputeEnvironmentInstanceProfile
         InstanceTypes:
-          - "optimal"
-          - "c5.large"
-          - "c5.xlarge"
-          - "c5.2xlarge"
-          - "c5.4xlarge"
-          - "c5.9xlarge"
-        MaxvCpus: 24
+          - c6g.large
+          - c6g.xlarge
+          - c6g.2xlarge
+          - p2.xlarge
+        MaxvCpus: 12
         MinvCpus: 0
         SecurityGroupIds:
           - !Ref ComputeEnvironmentSecurityGroup
