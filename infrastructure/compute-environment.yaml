@@ -149,9 +149,6 @@ Resources:
         ImageId: "ami-00b639818e857a757"
         InstanceRole: !Ref ComputeEnvironmentInstanceProfile
         InstanceTypes:
-          - c5.large
-          - c5.xlarge
-          - c5.2xlarge
           - p2.xlarge
         MaxvCpus: 12
         MinvCpus: 0

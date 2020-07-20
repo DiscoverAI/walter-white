@@ -20,7 +20,7 @@ Resources:
           - Name: LOGLEVEL
             Value: INFO
         Vcpus: 4
-        Memory: 61440
+        Memory: 30720
       RetryStrategy:
         Attempts: 1
 
