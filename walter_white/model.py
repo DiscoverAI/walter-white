@@ -1,4 +1,5 @@
 import logging
+import os
 from functools import reduce
 
 import boto3
@@ -37,10 +38,19 @@ def compile_model(neural_network_config):
     return nn_architecture
 
 
+def _upload_folder(bucket, remote_output_folder, local_folder_path):
+    for path, _subdirs, files in os.walk(local_folder_path):
+        directory_name = path.replace(local_folder_path, "")
+        for file in files:
+            remote_key = remote_output_folder + directory_name + '/' + file
+            local_path = os.path.join(path, file)
+            bucket.upload_file(local_path, remote_key)
+
+
 def persist_model(model, datalake, output_folder):
-    local_path = './generative_model.h5'
+    local_path = './generative_model/'
     model.save(local_path)
     s_3 = boto3.resource('s3')
     bucket = s_3.Bucket(datalake)
-    bucket.upload_file(local_path, output_folder + 'model.h5')
-    bucket.upload_file('./resources/tensorboard', output_folder + 'tensorboard')
+    _upload_folder(bucket, output_folder + 'tensorboard/', './resources/tensorboard')
+    _upload_folder(bucket, output_folder + 'model/', local_path)
