@@ -147,18 +147,13 @@ Resources:
       ComputeResources:
         DesiredvCpus: 0
         Ec2KeyPair: "tuco-key"
-        ImageId: "ami-02f21aee9f9eaeb35"
+        ImageId: "ami-08c4be469fbdca0fa"
         InstanceRole: !Ref ComputeEnvironmentInstanceProfile
         InstanceTypes:
           - "optimal"
-          - "c5.large"
           - "c5.xlarge"
           - "c5.2xlarge"
           - "c5.4xlarge"
-          - "p2.xlarge"
-          - "p3.2xlarge"
-          - "g4dn.xlarge"
-          - "g4dn.2xlarge"
         MaxvCpus: 32
         MinvCpus: 0
         SecurityGroupIds:
