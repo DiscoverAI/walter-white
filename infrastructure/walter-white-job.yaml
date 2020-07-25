@@ -21,6 +21,7 @@ Resources:
             Value: INFO
         Vcpus: 16
         Memory: 28672
+        Privileged: true
       RetryStrategy:
         Attempts: 1
 
