@@ -43,7 +43,8 @@ def train(neural_network_config, neural_network_model, train_ds, test_ds):
     batched_test_dataset = test_ds.batch(batch_size).repeat()
 
     callbacks = [
-        tf.keras.callbacks.TensorBoard(log_dir='resources/tensorboard', update_freq='batch')
+        tf.keras.callbacks.ProgbarLogger(count_mode='steps', stateful_metrics=None),
+        tf.keras.callbacks.TensorBoard(log_dir='resources/tensorboard', update_freq='batch'),
     ]
 
     return neural_network_model.fit(
@@ -62,9 +63,9 @@ if __name__ == '__main__':
 
     LOG.info('Start downloading datasets')
     datalake = os.environ['DATALAKE'].replace('s3://', '')
-    datasets.download_s3_folder(datalake, 'pinkman/dictionary.csv', 'dictionary')
-    datasets.download_s3_folder(datalake, 'pinkman/test.csv', './test')
-    datasets.download_s3_folder(datalake, 'pinkman/train.csv', './train')
+    # datasets.download_s3_folder(datalake, 'pinkman/dictionary.csv', 'dictionary')
+    # datasets.download_s3_folder(datalake, 'pinkman/test.csv', './test')
+    # datasets.download_s3_folder(datalake, 'pinkman/train.csv', './train')
     LOG.info('Done downloading datasets')
 
     dictionary_size = datasets.calculate_dictionary_size('./dictionary')
