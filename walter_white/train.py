@@ -43,7 +43,6 @@ def train(neural_network_config, neural_network_model, train_ds, test_ds):
     batched_test_dataset = test_ds.batch(batch_size).repeat()
 
     callbacks = [
-        tf.keras.callbacks.ProgbarLogger(count_mode='steps', stateful_metrics=None),
         tf.keras.callbacks.TensorBoard(log_dir='resources/tensorboard', update_freq='batch'),
     ]
 
