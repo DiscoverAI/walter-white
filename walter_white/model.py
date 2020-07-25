@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 from functools import reduce
@@ -47,10 +48,18 @@ def _upload_folder(bucket, remote_output_folder, local_folder_path):
             bucket.upload_file(local_path, remote_key.replace('//', '/'))
 
 
-def persist_model(model, datalake, output_folder):
+def store_metrics(history, local_path):
+    with open(local_path, 'w') as metrics_file:
+        json.dump(history, metrics_file)
+
+
+def persist_model(training_history, model, datalake, output_folder):
+    metrics_file_path = './metrics.json'
+    store_metrics(training_history, metrics_file_path)
     local_path = './generative_model/'
     model.save(local_path)
     s_3 = boto3.resource('s3')
     bucket = s_3.Bucket(datalake)
     _upload_folder(bucket, output_folder + 'tensorboard/', './resources/tensorboard')
     _upload_folder(bucket, output_folder + 'model/', local_path)
+    bucket.upload_file(metrics_file_path, output_folder + 'metrics.json')

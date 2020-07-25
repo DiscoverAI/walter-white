@@ -78,9 +78,9 @@ if __name__ == '__main__':
     LOG.info('Done building model')
 
     LOG.info('Start training model')
-    train(NN_CONF, nn_model, train_dataset, test_dataset)
+    history = train(NN_CONF, nn_model, train_dataset, test_dataset)
     LOG.info('Done training model')
 
     LOG.info('Start persisting model')
-    model.persist_model(nn_model, datalake, 'walter_white/')
+    model.persist_model(history.history, nn_model, datalake, 'walter_white/')
     LOG.info('Done persisting model')
