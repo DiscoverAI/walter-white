@@ -10,9 +10,9 @@ pylint = "*"
 
 [packages]
 tensorflow = "==2.1.0"
-scikit-learn = "*"
 boto3 = "*"
 walter-white = {editable = true, path = "."}
+mlflow = "*"
 
 [requires]
 python_version = "3.6"
