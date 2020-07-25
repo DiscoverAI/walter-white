@@ -19,8 +19,8 @@ Resources:
             Value: !Ref BucketUri
           - Name: LOGLEVEL
             Value: INFO
-        Vcpus: 16
-        Memory: 25600
+        Vcpus: 4
+        Memory: 51200
         ResourceRequirements:
           - Type: "GPU"
             Value: "1"
