@@ -25,7 +25,7 @@ Resources:
 #          - Type: "GPU"
 #            Value: "1"
       RetryStrategy:
-        Attempts: 0
+        Attempts: 1
 
 Outputs:
   WatlerWhiteJobDefinitionArn:
