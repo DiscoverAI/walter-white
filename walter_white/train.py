@@ -87,6 +87,7 @@ if __name__ == '__main__':
 
         LOG.info('Start downloading datasets')
         datalake = os.environ['DATALAKE'].replace('s3://', '')
+        mlflow.log_param('input', os.environ['DATALAKE'] + 'pinkman/')
         datasets.download_s3_folder(datalake, 'pinkman/dictionary.csv', 'dictionary')
         datasets.download_s3_folder(datalake, 'pinkman/test.csv', './test')
         datasets.download_s3_folder(datalake, 'pinkman/train.csv', './train')
@@ -94,7 +95,7 @@ if __name__ == '__main__':
 
         dictionary_size = datasets.calculate_dictionary_size('./dictionary')
         LOG.info('Dictionary size of: %s', dictionary_size)
-        mlflow.log_param('dictionary_size', dictionary_size)
+        mlflow.log_param('dictionarySize', dictionary_size)
         train_dataset = datasets.load_dataset(
             './train/*.csv',
             dictionary_size,
