@@ -1,4 +1,5 @@
-FROM tensorflow/tensorflow:2.1.0-gpu-py3
+#FROM tensorflow/tensorflow:2.1.0-gpu-py3
+FROM tensorflow/tensorflow:2.1.0-py3
 WORKDIR /usr/src/app
 COPY requirements.txt setup.py README.md ./
 COPY walter_white ./walter_white
