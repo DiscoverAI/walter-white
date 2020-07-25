@@ -118,8 +118,8 @@ if __name__ == '__main__':
         LOG.info('Done training model')
 
         LOG.info('Start persisting model')
-        model_path = model.persist_model(history.history, nn_model, datalake, 'walter_white/')
-        mlflow.log_param('output', os.environ['DATALAKE'] + model_path)
+        MODEL_PATH = model.persist_model(history.history, nn_model, datalake, 'walter_white/')
+        mlflow.log_param('output', os.environ['DATALAKE'] + MODEL_PATH)
         LOG.info('Done persisting model')
         mlflow.end_run(RunStatus.FINISHED)
     except Exception:
