@@ -82,6 +82,5 @@ if __name__ == '__main__':
     LOG.info('Done training model')
 
     LOG.info('Start persisting model')
-    print(history.history)
     model.persist_model(history.history, nn_model, datalake, 'walter_white/')
     LOG.info('Done persisting model')

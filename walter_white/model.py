@@ -6,6 +6,8 @@ from functools import reduce
 import boto3
 import tensorflow as tf
 
+from walter_white.numpy_encoder import NumpyArrayEncoder
+
 LOG = logging.getLogger(__name__)
 
 
@@ -50,7 +52,7 @@ def _upload_folder(bucket, remote_output_folder, local_folder_path):
 
 def store_metrics(history, local_path):
     with open(local_path, 'w') as metrics_file:
-        json.dump(history, metrics_file)
+        json.dump(history, metrics_file, cls=NumpyArrayEncoder)
 
 
 def persist_model(training_history, model, datalake, output_folder):

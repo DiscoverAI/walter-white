@@ -1,6 +1,7 @@
 import json
 import os
 
+import numpy as np
 from tensorflow import keras
 from tensorflow.keras import layers
 
@@ -89,7 +90,7 @@ def test_should_persist_mae_to_file():
         os.remove(metrics_file_path)
 
     history = {
-        'loss': [0.7043520392793597, 0.702940134707829],
+        'loss': [np.float32(0.7043520392793597), 0.702940134707829],
         'mean_absolute_error': [0.42077133, 0.42006454],
         'val_loss': [0.7049564123153687, 0.7046186923980713],
         'val_mean_absolute_error': [0.42031777, 0.42013824]
