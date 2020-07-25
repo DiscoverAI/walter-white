@@ -154,11 +154,11 @@ Resources:
           - "c5.xlarge"
           - "c5.2xlarge"
           - "c5.4xlarge"
-#          - "p2.xlarge" Need aws limit approval first to use graphic instances
-#          - "p3.2xlarge"
-#          - "g4dn.xlarge"
-#          - "g4dn.2xlarge"
-        MaxvCpus: 24
+          - "p2.xlarge"
+          - "p3.2xlarge"
+          - "g4dn.xlarge"
+          - "g4dn.2xlarge"
+        MaxvCpus: 32
         MinvCpus: 0
         SecurityGroupIds:
           - !Ref ComputeEnvironmentSecurityGroup

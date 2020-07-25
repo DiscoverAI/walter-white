@@ -21,9 +21,9 @@ Resources:
             Value: INFO
         Vcpus: 16
         Memory: 25600
-#        ResourceRequirements:
-#          - Type: "GPU"
-#            Value: "1"
+        ResourceRequirements:
+          - Type: "GPU"
+            Value: "1"
       RetryStrategy:
         Attempts: 1
 
