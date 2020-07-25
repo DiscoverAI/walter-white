@@ -32,7 +32,7 @@ def compile_model(neural_network_config):
     nn_architecture.summary(print_fn=LOG.info)
     nn_architecture.compile(
         loss=neural_network_config['lossFunction'],
-        metrics=['accuracy', tf.keras.metrics.Precision()],
+        metrics=['mean_absolute_error'],
         optimizer=neural_network_config['optimizer'],
     )
     return nn_architecture
