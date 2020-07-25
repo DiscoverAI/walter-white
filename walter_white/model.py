@@ -65,3 +65,4 @@ def persist_model(training_history, model, datalake, output_folder):
     _upload_folder(bucket, output_folder + 'tensorboard/', './resources/tensorboard')
     _upload_folder(bucket, output_folder + 'model/', local_path)
     bucket.upload_file(metrics_file_path, output_folder + 'metrics.json')
+    return output_folder + 'model/'

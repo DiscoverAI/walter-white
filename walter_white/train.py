@@ -1,16 +1,21 @@
 #!/usr/bin/env python3
+import json
 import logging
 import os
 
+import mlflow
 import tensorflow as tf
+from mlflow.entities import RunStatus
 
 from walter_white import model, datasets
 
 LOG = logging.getLogger(__name__)
+EXPERIMENT_NAME = 'sars-cov-2'
+JOB = 'walter_white'
 NN_CONF = {
     "optimizer": "adadelta",
     "lossFunction": "binary_crossentropy",
-    "epochs": 1,
+    "epochs": 5,
     "batchSize": 100000,
     "layers": {
         "input": {
@@ -57,30 +62,66 @@ def train(neural_network_config, neural_network_model, train_ds, test_ds):
     )
 
 
+def log_nn_config(nn_config):
+    mlflow.log_param('optimizer', nn_config['optimizer'])
+    mlflow.log_param('lossFunction', nn_config['lossFunction'])
+    mlflow.log_param('epochs', nn_config['epochs'])
+    mlflow.log_param('batchSize', nn_config['batchSize'])
+    mlflow.log_param('layers', json.dumps(nn_config['layers']))
+
+
+def log_metrics(training_history):
+    mean_absolute_error = training_history['val_mean_absolute_error'][-1]
+    mlflow.log_metric('mae', mean_absolute_error)
+
+
 if __name__ == '__main__':
-    LOG.info('Start loading datasets')
+    LOG.info('Start connecting to mlFlow instance')
+    mlflow.set_tracking_uri(os.environ['MLFLOW_TRACKING_URI'])
+    mlflow.set_experiment(EXPERIMENT_NAME)
+    mlflow.start_run(run_name=JOB)
+    LOG.info('Done connecting to mlFlow instance')
 
-    LOG.info('Start downloading datasets')
-    datalake = os.environ['DATALAKE'].replace('s3://', '')
-    datasets.download_s3_folder(datalake, 'pinkman/dictionary.csv', 'dictionary')
-    datasets.download_s3_folder(datalake, 'pinkman/test.csv', './test')
-    datasets.download_s3_folder(datalake, 'pinkman/train.csv', './train')
-    LOG.info('Done downloading datasets')
+    try:
+        LOG.info('Start loading datasets')
 
-    dictionary_size = datasets.calculate_dictionary_size('./dictionary')
-    LOG.info('Dictionary size of: %s', dictionary_size)
-    train_dataset = datasets.load_dataset('./train/*.csv', dictionary_size, datasets.MAX_SMILE_SIZE)
-    test_dataset = datasets.load_dataset('./test/*.csv', dictionary_size, datasets.MAX_SMILE_SIZE)
-    LOG.info('Done loading datasets')
+        LOG.info('Start downloading datasets')
+        datalake = os.environ['DATALAKE'].replace('s3://', '')
+        datasets.download_s3_folder(datalake, 'pinkman/dictionary.csv', 'dictionary')
+        datasets.download_s3_folder(datalake, 'pinkman/test.csv', './test')
+        datasets.download_s3_folder(datalake, 'pinkman/train.csv', './train')
+        LOG.info('Done downloading datasets')
 
-    LOG.info('Start building model')
-    nn_model = model.compile_model(NN_CONF)
-    LOG.info('Done building model')
+        dictionary_size = datasets.calculate_dictionary_size('./dictionary')
+        LOG.info('Dictionary size of: %s', dictionary_size)
+        mlflow.log_param('dictionary_size', dictionary_size)
+        train_dataset = datasets.load_dataset(
+            './train/*.csv',
+            dictionary_size,
+            datasets.MAX_SMILE_SIZE
+        )
+        test_dataset = datasets.load_dataset(
+            './test/*.csv',
+            dictionary_size,
+            datasets.MAX_SMILE_SIZE
+        )
+        LOG.info('Done loading datasets')
 
-    LOG.info('Start training model')
-    history = train(NN_CONF, nn_model, train_dataset, test_dataset)
-    LOG.info('Done training model')
+        LOG.info('Start building model')
+        nn_model = model.compile_model(NN_CONF)
+        log_nn_config(NN_CONF)
+        LOG.info('Done building model')
 
-    LOG.info('Start persisting model')
-    model.persist_model(history.history, nn_model, datalake, 'walter_white/')
-    LOG.info('Done persisting model')
+        LOG.info('Start training model')
+        history = train(NN_CONF, nn_model, train_dataset, test_dataset)
+        log_metrics(history.history)
+        LOG.info('Done training model')
+
+        LOG.info('Start persisting model')
+        model_path = model.persist_model(history.history, nn_model, datalake, 'walter_white/')
+        mlflow.log_param('output', os.environ['DATALAKE'] + model_path)
+        LOG.info('Done persisting model')
+        mlflow.end_run(RunStatus.FINISHED)
+    except Exception:
+        print("An exception occurred")
+        mlflow.end_run(RunStatus.FAILED)
