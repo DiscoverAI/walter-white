@@ -11,7 +11,7 @@ NN_CONF = {
     "optimizer": "adadelta",
     "lossFunction": "binary_crossentropy",
     "epochs": 1,
-    "batchSize": 10000,
+    "batchSize": 100000,
     "layers": {
         "input": {
             "neurons": 57,
@@ -63,9 +63,9 @@ if __name__ == '__main__':
 
     LOG.info('Start downloading datasets')
     datalake = os.environ['DATALAKE'].replace('s3://', '')
-    # datasets.download_s3_folder(datalake, 'pinkman/dictionary.csv', 'dictionary')
-    # datasets.download_s3_folder(datalake, 'pinkman/test.csv', './test')
-    # datasets.download_s3_folder(datalake, 'pinkman/train.csv', './train')
+    datasets.download_s3_folder(datalake, 'pinkman/dictionary.csv', 'dictionary')
+    datasets.download_s3_folder(datalake, 'pinkman/test.csv', './test')
+    datasets.download_s3_folder(datalake, 'pinkman/train.csv', './train')
     LOG.info('Done downloading datasets')
 
     dictionary_size = datasets.calculate_dictionary_size('./dictionary')
