@@ -44,7 +44,7 @@ def _upload_folder(bucket, remote_output_folder, local_folder_path):
         for file in files:
             remote_key = remote_output_folder + directory_name + '/' + file
             local_path = os.path.join(path, file)
-            bucket.upload_file(local_path, remote_key)
+            bucket.upload_file(local_path, remote_key.replace('//', '/'))
 
 
 def persist_model(model, datalake, output_folder):
