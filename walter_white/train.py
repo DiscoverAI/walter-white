@@ -5,7 +5,6 @@ import os
 
 import mlflow
 import tensorflow as tf
-from mlflow.entities import RunStatus
 
 from walter_white import model, datasets
 
@@ -15,7 +14,7 @@ JOB = 'walter_white'
 NN_CONF = {
     "optimizer": "adadelta",
     "lossFunction": "binary_crossentropy",
-    "epochs": 5,
+    "epochs": 1,
     "batchSize": 100000,
     "layers": {
         "input": {
@@ -122,7 +121,8 @@ if __name__ == '__main__':
         MODEL_PATH = model.persist_model(history.history, nn_model, datalake, 'walter_white/')
         mlflow.log_param('output', os.environ['DATALAKE'] + MODEL_PATH)
         LOG.info('Done persisting model')
-        mlflow.end_run(RunStatus.FINISHED)
-    except Exception:
-        print("An exception occurred")
-        mlflow.end_run(RunStatus.FAILED)
+        mlflow.end_run('FINISHED')
+    except Exception as exception:
+        LOG.error('could not finish run successfully', exception)
+        mlflow.end_run('FAILED')
+        exit(1)
