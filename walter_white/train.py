@@ -70,9 +70,10 @@ def log_nn_config(nn_config):
     mlflow.log_param('layers', json.dumps(nn_config['layers']))
 
 
-def log_metrics(training_history):
+def log_metrics(training_history, dictionary_size):
     mean_absolute_error = training_history['val_mean_absolute_error'][-1]
-    mlflow.log_metric('mae', mean_absolute_error)
+    mlflow.log_metric('mae', mean_absolute_error * dictionary_size)
+    mlflow.log_metric('mae_normalised', mean_absolute_error * dictionary_size)
 
 
 if __name__ == '__main__':
@@ -115,7 +116,7 @@ if __name__ == '__main__':
 
         LOG.info('Start training model')
         history = train(NN_CONF, nn_model, train_dataset, test_dataset)
-        log_metrics(history.history)
+        log_metrics(history.history, dictionary_size)
         LOG.info('Done training model')
 
         LOG.info('Start persisting model')
