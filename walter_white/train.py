@@ -2,6 +2,7 @@
 import json
 import logging
 import os
+import sys
 
 import mlflow
 import tensorflow as tf
@@ -123,6 +124,6 @@ if __name__ == '__main__':
         LOG.info('Done persisting model')
         mlflow.end_run('FINISHED')
     except Exception as exception:
-        LOG.error('could not finish run successfully', exception)
+        LOG.error('could not finish run successfully')
         mlflow.end_run('FAILED')
-        exit(1)
+        sys.exit(exception)
