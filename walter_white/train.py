@@ -87,7 +87,7 @@ if __name__ == '__main__':
 
         LOG.info('Start downloading datasets')
         datalake = os.environ['DATALAKE'].replace('s3://', '')
-        mlflow.log_param('input', os.environ['DATALAKE'] + 'pinkman/')
+        mlflow.log_param('input', os.environ['DATALAKE'] + '/pinkman/')
         datasets.download_s3_folder(datalake, 'pinkman/dictionary.csv', 'dictionary')
         datasets.download_s3_folder(datalake, 'pinkman/test.csv', './test')
         datasets.download_s3_folder(datalake, 'pinkman/train.csv', './train')
@@ -120,7 +120,7 @@ if __name__ == '__main__':
 
         LOG.info('Start persisting model')
         MODEL_PATH = model.persist_model(history.history, nn_model, datalake, 'walter_white/')
-        mlflow.log_param('output', os.environ['DATALAKE'] + MODEL_PATH)
+        mlflow.log_param('output', os.environ['DATALAKE'] + '/' + MODEL_PATH)
         LOG.info('Done persisting model')
         mlflow.end_run('FINISHED')
     except Exception as exception:
