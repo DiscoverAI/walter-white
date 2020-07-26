@@ -70,10 +70,10 @@ def log_nn_config(nn_config):
     mlflow.log_param('layers', json.dumps(nn_config['layers']))
 
 
-def log_metrics(training_history, dictionary_size):
+def log_metrics(training_history, normalization_factor):
     mean_absolute_error = training_history['val_mean_absolute_error'][-1]
-    mlflow.log_metric('mae', mean_absolute_error * dictionary_size)
-    mlflow.log_metric('mae_normalised', mean_absolute_error * dictionary_size)
+    mlflow.log_metric('mae', mean_absolute_error * normalization_factor)
+    mlflow.log_metric('mae_normalised', mean_absolute_error * normalization_factor)
 
 
 if __name__ == '__main__':
