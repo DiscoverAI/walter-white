@@ -14,7 +14,7 @@ EXPERIMENT_NAME = 'sars-cov-2'
 JOB = 'walter_white'
 NN_CONF = {
     "optimizer": "adadelta",
-    "lossFunction": "binary_crossentropy",
+    "lossFunction": "mean_absolute_error",
     "epochs": 1,
     "batchSize": 100000,
     "layers": {
