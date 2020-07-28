@@ -51,7 +51,7 @@ def train(neural_network_config, neural_network_model, train_ds, test_ds):
         tf.keras.callbacks.TensorBoard(log_dir='resources/tensorboard', update_freq='batch'),
     ]
     gpu_count = str(len(tf.config.experimental.list_physical_devices('GPU')))
-    LOG.info('Num GPUs Available: %s' % gpu_count)
+    LOG.info('Num GPUs Available: %s', gpu_count)
 
     return neural_network_model.fit(
         batched_train_dataset,
