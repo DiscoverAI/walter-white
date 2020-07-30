@@ -78,6 +78,31 @@ def log_metrics(training_history, normalization_factor):
     mlflow.log_metric('mae_normalised', mean_absolute_error * normalization_factor)
 
 
+def _format_layers(config):
+    if len(config['layers']['stacks']) > 0:
+        return [
+            {'key': 'input', 'value': {"neurons": 57}},
+            {'key': 'h1', 'value': config['layers']['stacks'][0]},
+            {
+                'key': 'output',
+                'value': {
+                    "neurons": 57,
+                    "activationFunction": "sigmoid",
+                }
+            }
+        ]
+    return [
+        {'key': 'input', 'value': {"neurons": 57}},
+        {
+            'key': 'output',
+            'value': {
+                "neurons": 57,
+                "activationFunction": "sigmoid",
+            }
+        }
+    ]
+
+
 if __name__ == '__main__':
     LOG.info('Start connecting to mlFlow instance')
     mlflow.set_tracking_uri(os.environ['MLFLOW_TRACKING_URI'])
