@@ -7,6 +7,17 @@
 
 A generative neural network model for creating drugs.
 
+##Make sure you are using python 3.6
+##Install pipenv (if you don't have it):
+```bash
+pip install pipenv
+```
+
+##Install packages from Pipfile:
+```bash
+pipenv install --dev
+```
+
 ## Run tests
 ```bash
 pipenv run pytest
