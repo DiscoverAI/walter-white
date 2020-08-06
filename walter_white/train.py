@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import json
 import logging
 import os
 import sys
@@ -76,23 +75,24 @@ def log_metrics(training_history, normalization_factor):
     mlflow.log_metric('mae', mean_absolute_error * normalization_factor)
     mlflow.log_metric('mae_normalised', mean_absolute_error * normalization_factor)
 
+
 def log_layers(layers):
     for layer in layers:
-        mlflow.log_param(layer["key"]+"Layer", layer["value"])
+        mlflow.log_param(layer["key"] + "Layer", layer["value"])
 
 
 def _format_layers(config):
     def format_layer(key, layer):
         return {"key": key, "value": layer}
+
     layers_list = []
     layers_list.append(format_layer("input", config['input']))
     if len(config['stacks']) > 0:
         for i, layer in enumerate(config['stacks']):
-            layers_list.append(format_layer("h"+str(i+1), layer))
+            layers_list.append(format_layer("h" + str(i + 1), layer))
     layers_list.append(format_layer("output", config['output']))
 
     return layers_list
-
 
 
 if __name__ == '__main__':
