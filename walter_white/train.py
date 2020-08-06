@@ -2,6 +2,7 @@
 import logging
 import os
 import sys
+from functools import reduce
 
 import mlflow
 import tensorflow as tf
@@ -81,18 +82,22 @@ def log_layers(layers):
         mlflow.log_param(layer["key"] + "Layer", layer["value"])
 
 
-def _format_layers(config):
-    def format_layer(key, layer):
-        return {"key": key, "value": layer}
+def format_layer(key, layer):
+    return {"key": key, "value": layer}
 
-    layers_list = []
-    layers_list.append(format_layer("input", config['input']))
-    if len(config['stacks']) > 0:
-        for i, layer in enumerate(config['stacks']):
-            layers_list.append(format_layer("h" + str(i + 1), layer))
-    layers_list.append(format_layer("output", config['output']))
 
-    return layers_list
+def format_hidden_layer(acc, hidden_layer):
+    return {
+        'index': acc['index'] + 1,
+        'stacks': acc['stacks'] + [format_layer("h" + str(acc['index']), hidden_layer)]
+    }
+
+
+def format_layers(config):
+    formatted_input_layer = [format_layer("input", config['input'])]
+    formatted_hidden_layers = reduce(format_hidden_layer, config['stacks'], {'index': 1, 'stacks': []})
+    formatted_output_layer = [format_layer("output", config['output'])]
+    return formatted_input_layer + formatted_hidden_layers['stacks'] + formatted_output_layer
 
 
 if __name__ == '__main__':
@@ -131,7 +136,7 @@ if __name__ == '__main__':
         LOG.info('Start building model')
         nn_model = model.compile_model(NN_CONF)
         log_nn_config(NN_CONF)
-        log_layers(_format_layers(NN_CONF["layers"]))
+        log_layers(format_layers(NN_CONF["layers"]))
         LOG.info('Done building model')
 
         LOG.info('Start training model')
