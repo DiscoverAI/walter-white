@@ -36,6 +36,11 @@ pipenv install --dev
 pipenv run pytest
 ```
 
+If you want to run a single test you can run
+```bash
+pipenv run pytest -k <test_name>
+```
+
 ## Run linter
 ```bash
 pipenv run lint
