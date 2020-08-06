@@ -69,7 +69,6 @@ def log_nn_config(nn_config):
     mlflow.log_param('lossFunction', nn_config['lossFunction'])
     mlflow.log_param('epochs', nn_config['epochs'])
     mlflow.log_param('batchSize', nn_config['batchSize'])
-    mlflow.log_param('layers', json.dumps(nn_config['layers']))
 
 
 def log_metrics(training_history, normalization_factor):
@@ -77,30 +76,23 @@ def log_metrics(training_history, normalization_factor):
     mlflow.log_metric('mae', mean_absolute_error * normalization_factor)
     mlflow.log_metric('mae_normalised', mean_absolute_error * normalization_factor)
 
+def log_layers(layers):
+    for layer in layers:
+        mlflow.log_param(layer["key"]+"Layer", layer["value"])
+
 
 def _format_layers(config):
-    if len(config['layers']['stacks']) > 0:
-        return [
-            {'key': 'input', 'value': {"neurons": 57}},
-            {'key': 'h1', 'value': config['layers']['stacks'][0]},
-            {
-                'key': 'output',
-                'value': {
-                    "neurons": 57,
-                    "activationFunction": "sigmoid",
-                }
-            }
-        ]
-    return [
-        {'key': 'input', 'value': {"neurons": 57}},
-        {
-            'key': 'output',
-            'value': {
-                "neurons": 57,
-                "activationFunction": "sigmoid",
-            }
-        }
-    ]
+    def format_layer(key, layer):
+        return {"key": key, "value": layer}
+    layers_list = []
+    layers_list.append(format_layer("input", config['input']))
+    if len(config['stacks']) > 0:
+        for i, layer in enumerate(config['stacks']):
+            layers_list.append(format_layer("h"+str(i+1), layer))
+    layers_list.append(format_layer("output", config['output']))
+
+    return layers_list
+
 
 
 if __name__ == '__main__':
@@ -139,6 +131,7 @@ if __name__ == '__main__':
         LOG.info('Start building model')
         nn_model = model.compile_model(NN_CONF)
         log_nn_config(NN_CONF)
+        log_layers(_format_layers(NN_CONF["layers"]))
         LOG.info('Done building model')
 
         LOG.info('Start training model')

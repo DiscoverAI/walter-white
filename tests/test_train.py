@@ -16,7 +16,7 @@ def test_should_format_2_layers_neural_network_config():
         }
     }
 
-    actual = train._format_layers(config)
+    actual = train._format_layers(config["layers"])
     expected = [
         {'key': 'input', 'value': {"neurons": 57}},
         {
@@ -51,7 +51,7 @@ def test_should_format_3_layers_neural_network_config():
         }
     }
 
-    actual = train._format_layers(config)
+    actual = train._format_layers(config["layers"])
     expected = [
         {'key': 'input', 'value': {"neurons": 57}},
         {'key': 'h1', 'value': {
@@ -93,7 +93,7 @@ def test_should_format_n_layers_neural_network_config():
         }
     }
 
-    actual = train._format_layers(config)
+    actual = train._format_layers(config["layers"])
     expected = [
         {'key': 'input', 'value': {"neurons": 13}},
         {'key': 'h1', 'value': {
@@ -115,3 +115,4 @@ def test_should_format_n_layers_neural_network_config():
     ]
 
     assert expected == actual
+
