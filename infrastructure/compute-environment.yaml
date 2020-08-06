@@ -179,3 +179,8 @@ Outputs:
     Value: !Ref ComputeEnvironmentJobQueue
     Export:
       Name: !Sub '${AWS::StackName}-JobQueue-Arn'
+  ComputeEnvironmentVPCId:
+    Description: The VPC ID
+    Value: !Ref ComputeEnvironmentVPC
+    Export:
+      Name: !Sub '${AWS::StackName}-VPC-Id'

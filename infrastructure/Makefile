@@ -2,6 +2,16 @@ project_name = "sars-cov-2"
 service_name = "$(project_name)-walter-white"
 bucket_name = "$(project_name)-25309b4013524"
 
+region = "eu-central-1"
+
+admin_profile = "tortugas-administrator"
+developer_profile = "tortugas-developer"
+
+wait_for_status_change=5
+
+now := $(shell date +%s)
+
+
 .PHONY: compute-environment-template-test
 compute-environment-template-test:
 	aws cloudformation validate-template --template-body file://./compute-environment.yaml >> /dev/null
@@ -11,8 +21,30 @@ compute-environment:
 	aws cloudformation deploy \
 		--template-file compute-environment.yaml \
 		--stack-name "$(project_name)-compute-environment" \
-		--capabilities CAPABILITY_IAM \
+		--region $(region) \
+        --capabilities CAPABILITY_NAMED_IAM \
+        --profile $(developer_role) \
 		--parameter-overrides ProjectName=$(project_name) DatalakeStackName="$(project_name)-datalake"
+
+.PHONY: update-compute-environment
+update-compute-environment:
+	aws cloudformation create-change-set \
+		--change-set-name "$(project_name)-compute-environment-${now}" \
+		--change-set-type UPDATE \
+		--template-body file://./compute-environment.yaml \
+		--stack-name "$(project_name)-compute-environment" \
+		--region $(region) \
+		--capabilities CAPABILITY_NAMED_IAM \
+		--profile $(developer_profile) \
+		--parameters ParameterKey=ProjectName,ParameterValue=$(project_name) ParameterKey=DatalakeStackName,ParameterValue="$(project_name)-datalake"
+
+	sleep $(wait_for_status_change)
+
+	aws cloudformation execute-change-set \
+		--change-set-name "$(project_name)-compute-environment-${now}" \
+		--stack-name "$(project_name)-compute-environment" \
+		--region $(region) \
+		--profile $(developer_profile)
 
 .PHONY: walter-white-job-template-test
 walter-white-job-template-test:
