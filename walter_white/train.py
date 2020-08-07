@@ -95,7 +95,8 @@ def format_hidden_layer(acc, hidden_layer):
 
 def format_layers(config):
     formatted_input_layer = [format_layer("input", config['input'])]
-    formatted_hidden_layers = reduce(format_hidden_layer, config['stacks'], {'index': 1, 'stacks': []})
+    formatted_hidden_layers = reduce(format_hidden_layer, config['stacks'],
+                                     {'index': 1, 'stacks': []})
     formatted_output_layer = [format_layer("output", config['output'])]
     return formatted_input_layer + formatted_hidden_layers['stacks'] + formatted_output_layer
 
