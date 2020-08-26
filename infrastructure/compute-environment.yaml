@@ -5,73 +5,15 @@ Parameters:
   DatalakeStackName:
     Type: String
     Description: Stack name of the datalake
+  VPCStackName:
+    Type: String
+    Description: The name of the VPC Stack
 
 Resources:
-  ComputeEnvironmentVPC:
-    Type: AWS::EC2::VPC
-    Properties:
-      Tags:
-        - Key: Project
-          Value: !Ref ProjectName
-      CidrBlock: "10.0.0.0/16"
-
-  ComputeEnvironmentInternetGateway:
-    Type: AWS::EC2::InternetGateway
-    Properties:
-      Tags:
-        - Key: Project
-          Value: !Ref ProjectName
-
-  ComputeEnvironmentRouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref ComputeEnvironmentVPC
-      Tags:
-        - Key: Project
-          Value: !Ref ProjectName
-
-  ComputeEnvironmentVPCGatewayAttachment:
-    Type: AWS::EC2::VPCGatewayAttachment
-    Properties:
-      VpcId: !Ref ComputeEnvironmentVPC
-      InternetGatewayId: !Ref ComputeEnvironmentInternetGateway
-
-  ComputeEnvironmentSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: EC2 Security Group for instances launched in the VPC by Batch
-      VpcId: !Ref ComputeEnvironmentVPC
-      Tags:
-        - Key: Project
-          Value: !Ref ProjectName
-
-  ComputeEnvironmentSubnet:
-    Type: AWS::EC2::Subnet
-    Properties:
-      AvailabilityZone: "eu-central-1a"
-      CidrBlock: 10.0.0.0/24
-      VpcId: !Ref ComputeEnvironmentVPC
-      MapPublicIpOnLaunch: 'True'
-      Tags:
-        - Key: Project
-          Value: !Ref ProjectName
-
-  ComputeEnvironmentRoute:
-    Type: AWS::EC2::Route
-    Properties:
-      RouteTableId: !Ref ComputeEnvironmentRouteTable
-      DestinationCidrBlock: 0.0.0.0/0
-      GatewayId: !Ref ComputeEnvironmentInternetGateway
-
-  ComputeEnvironmentSubnetRouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      RouteTableId: !Ref ComputeEnvironmentRouteTable
-      SubnetId: !Ref ComputeEnvironmentSubnet
-
   ComputeEnvironmentServiceRole:
     Type: AWS::IAM::Role
     Properties:
+      PermissionsBoundary: !Sub "arn:aws:iam::${AWS::AccountId}:policy/DeveloperBoundary"
       Tags:
         - Key: Project
           Value: !Ref ProjectName
@@ -94,6 +36,7 @@ Resources:
   ComputeEnvironmentInstanceRole:
     Type: AWS::IAM::Role
     Properties:
+      PermissionsBoundary: !Sub "arn:aws:iam::${AWS::AccountId}:policy/DeveloperBoundary"
       Tags:
         - Key: Project
           Value: !Ref ProjectName
@@ -141,6 +84,18 @@ Resources:
       Roles:
         - !Ref ComputeEnvironmentInstanceRole
 
+  ComputeEnvironmentSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: EC2 Security Group for instances launched in the VPC by Batch
+      VpcId:
+        Fn::ImportValue:
+          !Join ['-', [!Ref 'VPCStackName', 'VPC']]
+      Tags:
+        - Key: Project
+          Value: !Ref ProjectName
+
+
   ComputeEnvironment:
     Type: AWS::Batch::ComputeEnvironment
     Properties:
@@ -158,8 +113,9 @@ Resources:
         MinvCpus: 0
         SecurityGroupIds:
           - !Ref ComputeEnvironmentSecurityGroup
-        Subnets:
-          - !Ref ComputeEnvironmentSubnet
+        Subnets:Fn::ImportValue:
+          !Join ['-', [!Ref 'VPCStackName', 'PrivateSubnet1']]
+          -
         Type: "EC2"
       ServiceRole: !Ref ComputeEnvironmentServiceRole
       State: "ENABLED"
@@ -179,8 +135,3 @@ Outputs:
     Value: !Ref ComputeEnvironmentJobQueue
     Export:
       Name: !Sub '${AWS::StackName}-JobQueue-Arn'
-  ComputeEnvironmentVPCId:
-    Description: The VPC ID
-    Value: !Ref ComputeEnvironmentVPC
-    Export:
-      Name: !Sub '${AWS::StackName}-VPC-Id'

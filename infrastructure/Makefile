@@ -14,7 +14,7 @@ now := $(shell date +%s)
 
 .PHONY: compute-environment-template-test
 compute-environment-template-test:
-	aws cloudformation validate-template --template-body file://./compute-environment.yaml >> /dev/null
+	aws cloudformation validate-template --profile $(developer_profile) --region $(region) --template-body file://./compute-environment.yaml >> /dev/null
 
 .PHONY: compute-environment
 compute-environment:
@@ -23,8 +23,8 @@ compute-environment:
 		--stack-name "$(project_name)-compute-environment" \
 		--region $(region) \
         --capabilities CAPABILITY_NAMED_IAM \
-        --profile $(developer_role) \
-		--parameter-overrides ProjectName=$(project_name) DatalakeStackName="$(project_name)-datalake"
+        --profile $(developer_profile) \
+		--parameter-overrides ProjectName=$(project_name) DatalakeStackName="$(project_name)-datalake" VPCStackName=$(project_name)-vpc
 
 .PHONY: update-compute-environment
 update-compute-environment:
@@ -36,7 +36,7 @@ update-compute-environment:
 		--region $(region) \
 		--capabilities CAPABILITY_NAMED_IAM \
 		--profile $(developer_profile) \
-		--parameters ParameterKey=ProjectName,ParameterValue=$(project_name) ParameterKey=DatalakeStackName,ParameterValue="$(project_name)-datalake"
+		--parameters ParameterKey=ProjectName,ParameterValue=$(project_name) ParameterKey=DatalakeStackName,ParameterValue="$(project_name)-datalake" ParameterKey=VPCStackName,ParameterValue="$(project_name)-vpc"
 
 	sleep $(wait_for_status_change)
 
@@ -48,13 +48,15 @@ update-compute-environment:
 
 .PHONY: walter-white-job-template-test
 walter-white-job-template-test:
-	aws cloudformation validate-template --template-body file://./walter-white-job.yaml >> /dev/null
+	aws cloudformation validate-template --region $(region) --profile $(developer_profile) --template-body file://./walter-white-job.yaml >> /dev/null
 
 .PHONY: walter-white-job
 walter-white-job:
 	aws cloudformation deploy \
 		--template-file walter-white-job.yaml \
 		--stack-name "$(service_name)" \
+		--region $(region) \
+        --profile $(developer_profile)
 		--parameter-overrides ServiceName=$(service_name) BucketUri="s3://$(bucket_name)"
 
 .PHONY: infrastructure
