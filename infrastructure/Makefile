@@ -58,7 +58,7 @@ walter-white-job:
 		--stack-name "$(service_name)" \
 		--region $(region) \
         --profile $(developer_profile)
-		--parameter-overrides ServiceName=$(service_name) BucketUri="s3://$(bucket_name)" MLFlowStackName="$(project_name)-ehrmantraut-on-ec2"
+		--parameter-overrides ServiceName=$(service_name) BucketUri="s3://$(bucket_name)"
 
 .PHONY: update-walter-white-job
 update-walter-white-job:
@@ -70,7 +70,7 @@ update-walter-white-job:
 		--region $(region) \
 		--capabilities CAPABILITY_NAMED_IAM \
 		--profile $(developer_profile) \
-		--parameters ParameterKey=ServiceName,ParameterValue=$(service_name) ParameterKey=BucketUri,ParameterValue="s3://$(bucket_name)" ParameterKey=MLFlowStackName,ParameterValue="$(project_name)-ehrmantraut-on-ec2"
+		--parameters ParameterKey=ServiceName,ParameterValue=$(service_name) ParameterKey=BucketUri,ParameterValue="s3://$(bucket_name)"
 
 	sleep $(wait_for_status_change)
 
