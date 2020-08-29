@@ -20,7 +20,7 @@ Resources:
           - Name: LOGLEVEL
             Value: INFO
           - Name: MLFLOW_TRACKING_URI
-            Value: ehrmantraut.sars-cov2.local
+            Value: http://ehrmantraut.sars-cov2.local
         Vcpus: 16
         Memory: 28672
         Privileged: true

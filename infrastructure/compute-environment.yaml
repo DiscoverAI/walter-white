@@ -113,9 +113,9 @@ Resources:
         MinvCpus: 0
         SecurityGroupIds:
           - !Ref ComputeEnvironmentSecurityGroup
-        Subnets:Fn::ImportValue:
-          !Join ['-', [!Ref 'VPCStackName', 'PrivateSubnet1']]
-          -
+        Subnets:
+          - Fn::ImportValue:
+              !Join ['-', [!Ref 'VPCStackName', 'PrivateSubnet1']]
         Type: "EC2"
       ServiceRole: !Ref ComputeEnvironmentServiceRole
       State: "ENABLED"
