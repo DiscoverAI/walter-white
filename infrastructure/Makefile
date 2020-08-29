@@ -1,5 +1,6 @@
 project_name = "sars-cov-2"
-service_name = "$(project_name)-walter-white"
+module_name = "walter-white"
+service_name = "$(project_name)-$(module_name)"
 bucket_name = "$(project_name)-25309b4013524"
 
 region = "eu-central-1"
@@ -57,7 +58,27 @@ walter-white-job:
 		--stack-name "$(service_name)" \
 		--region $(region) \
         --profile $(developer_profile)
-		--parameter-overrides ServiceName=$(service_name) BucketUri="s3://$(bucket_name)"
+		--parameter-overrides ServiceName=$(service_name) BucketUri="s3://$(bucket_name)" MLFlowStackName="$(project_name)-ehrmantraut-on-ec2"
+
+.PHONY: update-walter-white-job
+update-walter-white-job:
+	aws cloudformation create-change-set \
+		--change-set-name "$(service_name)-${now}" \
+		--change-set-type UPDATE \
+		--template-body file://./walter-white-job.yaml \
+		--stack-name "$(service_name)" \
+		--region $(region) \
+		--capabilities CAPABILITY_NAMED_IAM \
+		--profile $(developer_profile) \
+		--parameters ParameterKey=ServiceName,ParameterValue=$(service_name) ParameterKey=BucketUri,ParameterValue="s3://$(bucket_name)" ParameterKey=MLFlowStackName,ParameterValue="$(project_name)-ehrmantraut-on-ec2"
+
+	sleep $(wait_for_status_change)
+
+	aws cloudformation execute-change-set \
+		--change-set-name "$(service_name)-${now}" \
+		--stack-name "$(service_name)" \
+		--region $(region) \
+		--profile $(developer_profile)
 
 .PHONY: infrastructure
 infrastructure: compute-environment walter-white-job

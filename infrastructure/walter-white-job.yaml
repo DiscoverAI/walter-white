@@ -5,6 +5,9 @@ Parameters:
   BucketUri:
     Type: String
     Description: URI of the Datalake bucket
+  MLFlowStackName:
+    Type: String
+    Description: The StackName of the MLFlow application
 
 Resources:
   WalterWhiteJobDefinition:
@@ -19,6 +22,10 @@ Resources:
             Value: !Ref BucketUri
           - Name: LOGLEVEL
             Value: INFO
+          - Name: MLFLOW_TRACKING_URI
+            Value:
+              Fn::ImportValue:
+                !Join ['-', [!Ref 'MLFlowStackName', 'DNSRecord']]
         Vcpus: 16
         Memory: 28672
         Privileged: true
